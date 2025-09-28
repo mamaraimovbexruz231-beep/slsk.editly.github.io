@@ -1,0 +1,144 @@
+/* Phone Editing 101 - External Stylesheet
+   You can tweak variables in :root to quickly change theme colors and spacing. */
+
+:root {
+  /* Brand colors */
+  --bg: #0f172a;
+  --panel: #111827;
+  --text: #e5e7eb;
+  --muted: #a1a1aa;
+  --accent: #22d3ee;   /* cyan */
+  --accent-2: #60a5fa; /* blue */
+  --card: #0b1220;
+
+  /* Layout & spacing */
+  --radius: 12px;
+  --shadow: 0 8px 28px rgba(2, 6, 23, 0.45), inset 0 0 0 1px rgba(255,255,255,0.03);
+  --gap: 16px;
+  --container: min(1100px, 92%);
+
+  /* Typography scale */
+  --fs-300: 0.9rem;
+  --fs-400: 1rem;
+  --fs-500: clamp(1.05rem, 1.4vw, 1.15rem);
+  --fs-600: clamp(1.4rem, 2vw, 1.6rem);
+  --fs-700: clamp(1.8rem, 3.5vw, 2.5rem);
+}
+
+/* Base */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  color: var(--text);
+  /* Background video exists; keep backgrounds subtle here */
+  background: linear-gradient(180deg, var(--bg), #0b1020 60%, #090f1a 100%);
+  line-height: 1.6;
+}
+
+.container { width: var(--container); margin-inline: auto; }
+
+/* Accessibility */
+:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+.skip-link { position: absolute; left: -9999px; top: auto; }
+.skip-link:focus { left: 1rem; top: 1rem; background: #111; color: #fff; padding: .5rem .75rem; border-radius: .375rem; }
+
+/* Header / Nav */
+header {
+  position: sticky; top: 0; z-index: 20;
+  background: rgba(17,24,39,.6);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.header-inner { display: flex; align-items: center; justify-content: space-between; padding: .9rem 0; }
+.brand { display: flex; align-items: center; gap: .6rem; font-weight: 700; letter-spacing: .2px; }
+.brand .logo { font-size: 1.2rem; }
+nav ul { display: flex; gap: .9rem; list-style: none; padding: 0; margin: 0; }
+nav a { color: var(--text); font-size: .95rem; opacity: .85; padding: .25rem .35rem; border-radius: 6px; transition: color .2s ease, background-color .2s ease; }
+nav a:hover { opacity: 1; color: var(--accent-2); background: rgba(96,165,250,.08); }
+
+/* Hero */
+.hero { padding: 56px 0 28px; text-align: center; }
+.hero h1 { font-size: var(--fs-700); line-height: 1.2; margin: .25rem 0; background: linear-gradient(90deg, var(--accent-2), var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero p { color: var(--muted); margin: .25rem auto 0; max-width: 60ch; }
+
+/* Sections */
+.section { padding: 28px 0; }
+.section h2 { font-size: var(--fs-600); margin: 0 0 .75rem; }
+.muted { color: var(--muted); }
+
+/* Cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--gap); }
+.card {
+  background: linear-gradient(180deg, var(--card), #0a0f1c);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: var(--shadow);
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(2,6,23,.45), inset 0 0 0 1px rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); }
+.card h3 { margin: 0 0 .4rem; font-size: 1.05rem; }
+.objectives { padding-left: 1.1rem; margin: .2rem 0 0; }
+
+/* Details / FAQ */
+details { background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.06); border-radius: 10px; padding: .6rem .8rem; }
+details + details { margin-top: .5rem; }
+details > summary { cursor: pointer; list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary { display: flex; align-items: center; gap: .5rem; }
+details > summary::after { content: "+"; margin-left: auto; color: var(--accent); transition: transform .2s ease; }
+details[open] > summary::after { content: "–"; color: var(--accent-2); }
+
+/* Buttons (utility, not required by current HTML) */
+.btn { display: inline-flex; align-items: center; gap: .5rem; padding: .6rem .9rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.08); color: var(--text); background: rgba(255,255,255,.03); text-decoration: none; transition: transform .15s ease, background-color .2s ease, border-color .2s ease; }
+.btn:hover { transform: translateY(-1px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.14); }
+.btn-primary { background: linear-gradient(90deg, var(--accent-2), var(--accent)); color: #06131a; border: none; }
+.btn-primary:hover { filter: brightness(1.06); }
+
+/* Background video (defined in HTML inline as well; included here for completeness) */
+.bg-video { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.bg-video::after { content: ""; position: absolute; inset: 0; background: rgba(3, 6, 23, 0.55); }
+.bg-video video { width: 100%; height: 100%; object-fit: cover; }
+main, footer { position: relative; z-index: 1; }
+
+/* Footer */
+footer { margin-top: 20px; border-top: 1px solid rgba(255,255,255,.08); background: rgba(17,24,39,.5); }
+.footer-inner { padding: 12px 0; font-size: .95rem; color: var(--muted); }
+
+/* Animations */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.hero, .section { animation: fadeUp .6s ease-out both; }
+.section:nth-of-type(odd) { animation-delay: .05s; }
+.section:nth-of-type(even) { animation-delay: .1s; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  nav ul { flex-wrap: wrap; gap: .6rem; }
+  .brand span { font-size: var(--fs-500); }
+  .card { padding: 12px; }
+}
+
+/* ===== Edits title color (CSS-only control) =====
+   Change these two variables to control the title colors for
+   <span class="turbulence-purple-blacktext">Some of my edits</span>
+*/
+:root {
+  --edits-c1: #000000; /* first color (black by default) */
+  --edits-c2: #12002a; /* second color (dark purple by default) */
+}
+.turbulence-purple-blacktext {
+  background: linear-gradient(90deg, var(--edits-c1), var(--edits-c2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent; /* ensure clipped text renders across browsers */
+  filter: url(#turbulencePurpleBlackText); /* color turbulence within glyphs (no warping) */
+}
+

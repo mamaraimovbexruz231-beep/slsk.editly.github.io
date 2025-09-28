@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Beginner-friendly website to learn editing on your phone: photos, videos, and documents." />
+    <title>Phone Editing</title>
+    <link rel="stylesheet" href="test2.css" />
+
+    <!-- Minimal, inline styles so this works without a separate CSS file. Edit or replace later. -->
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #111827;
+        --text: #e5e7eb;
+        --muted: #a1a1aa;
+        --accent: #22d3ee;
+        --accent-2: #60a5fa;
+        --card: #0b1220;
+      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        color: var(--text);
+        background: linear-gradient(180deg, var(--bg), #0b1020 60%, #090f1a 100%);
+        line-height: 1.6;
+      }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .container { width: min(1100px, 92%); margin-inline: auto; }
+      .skip-link { position: absolute; left: -9999px; top: auto; }
+      .skip-link:focus { left: 1rem; top: 1rem; background: #111; color: #fff; padding: .5rem .75rem; border-radius: .375rem; }
+
+      header {
+        position: sticky; top: 0; z-index: 20;
+        background: rgba(17,24,39,.6);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255,255,255,.05);
+      }
+      .header-inner { display: flex; align-items: center; justify-content: space-between; padding: .9rem 0; }
+      .brand { display: flex; align-items: center; gap: .6rem; font-weight: 700; letter-spacing: .2px; }
+      .brand .logo { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; position: relative; }
+      .brand .logo::before {
+        content: ""; position: absolute; inset: -3px; border-radius: 50%; z-index: 0;
+        background: conic-gradient(from 0deg, #12002a, #3b0764, #0b1020, #12002a);
+        animation: spinRing 6s linear infinite;
+        filter: blur(4px) saturate(1.1);
+      }
+      .brand .logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; position: relative; z-index: 1; box-shadow: 0 4px 20px rgba(18,0,42,.35); }
+      @keyframes spinRing { to { transform: rotate(360deg); } }
+      nav ul { display: flex; gap: .9rem; list-style: none; padding: 0; margin: 0; }
+      nav a { color: var(--text); font-size: .95rem; opacity: .85; }
+      nav a:hover { opacity: 1; color: var(--accent-2); }
+
+      .hero { min-height: 100svh; display: flex; align-items: center; justify-content: center; padding: 96px 0 56px; text-align: center; }
+      .hero h1 { font-size: clamp(1.8rem, 3.5vw, 2.5rem); line-height: 1.2; margin: .25rem 0; }
+      .hero p { color: var(--muted); margin: .25rem auto 0; max-width: 60ch; }
+
+      .section { padding: 28px 0; }
+      .section h2 { font-size: clamp(1.3rem, 2.2vw, 1.6rem); margin: 0 0 .75rem; }
+      .muted { color: var(--muted); }
+
+      .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+      .card {
+        background: linear-gradient(180deg, var(--card), #0a0f1c);
+        border: 1px solid rgba(255,255,255,.06);
+        border-radius: 10px;
+        padding: 14px;
+        box-shadow: 0 6px 20px rgba(2,6,23,.35), inset 0 0 0 1px rgba(255,255,255,.02);
+      }
+      .card h3 { margin: 0 0 .4rem; font-size: 1.05rem; }
+      .objectives { padding-left: 1.1rem; margin: .2rem 0 0; }
+
+      details { background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.06); border-radius: 8px; padding: .6rem .8rem; }
+      details + details { margin-top: .5rem; }
+
+      .top-link { text-align: center; margin: 10px 0 0; }
+
+      /* Background video */
+      .bg-video { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+      .bg-video::after { content: ""; position: absolute; inset: 0; background: rgba(3, 6, 23, 0.55); }
+      .bg-video video { width: 100%; height: 100%; object-fit: cover; }
+      main, footer { position: relative; z-index: 1; }
+
+      footer { margin-top: 20px; border-top: 1px solid rgba(255,255,255,.08); background: rgba(17,24,39,.5); }
+      .footer-inner { padding: 12px 0; font-size: .95rem; color: var(--muted); }
+
+      /* Visual enhancements */
+      html { scroll-behavior: smooth; }
+      :focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+
+      .card { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+      .card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(2,6,23,.45), inset 0 0 0 1px rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); }
+
+      .hero h1:not(.turbulence-purple) { background: linear-gradient(90deg, var(--accent-2), var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      /* Purple gradient text styles */
+      .text-gradient-purple {
+        background: linear-gradient(90deg, #2d0a4e 0%, #4c1d95 50%, #7c3aed 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 1px 1px rgba(0,0,0,.35);
+      }
+      /* Turbulence animated purple gradient */
+      .turbulence-purple {
+        color: #ffffff;
+        filter: url(#turbulencePurpleColor);
+      }
+      .turbulence-purple-black {
+        color: #ffffff;
+        filter: url(#turbulencePurpleBlack);
+        text-shadow: 0 0 10px rgba(59,7,100,.6), 0 0 18px rgba(18,0,42,.4);
+      }
+      .turbulence-purple-edits {
+        color: #ffffff;
+        filter: url(#turbulencePurpleColorEdits);
+      }
+      
+      /* Learn section (Foundations) */
+      #overview .learn-intro { max-width: 70ch; margin: .25rem auto 1rem; color: var(--muted); }
+      .learn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 14px; margin-top: 8px; }
+      .learn-card {
+        background: linear-gradient(180deg, var(--card), #0a0f1c);
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: var(--shadow, 0 6px 20px rgba(2,6,23,.35));
+        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease, background .25s ease;
+      }
+      .learn-card:hover { transform: translateY(-3px); border-color: rgba(96,165,250,.35); box-shadow: 0 12px 28px rgba(2,6,23,.5); }
+      .learn-icon {
+        width: 42px; height: 42px; border-radius: 10px;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: linear-gradient(135deg, #7c3aed33, #22d3ee33);
+        border: 1px solid rgba(255,255,255,.12);
+        margin-bottom: .5rem; font-size: 20px;
+      }
+      .learn-card h3 { margin: 0 0 .25rem; font-size: 1.05rem; letter-spacing: .2px; }
+      .learn-card p { margin: 0; color: var(--muted); font-size: .95rem; }
+
+      /* Centered two-row layout: 4 top, 2 centered below */
+      @media (min-width: 900px) {
+        .learn-grid--primary { grid-template-columns: repeat(4, minmax(0,1fr)); }
+        .learn-grid--primary .learn-card:nth-child(5) { grid-column: 2; }
+        .learn-grid--primary .learn-card:nth-child(6) { grid-column: 3; }
+      }
+      .learn-sep { margin: 18px auto; width: min(680px, 90%); height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent); }
+      .learn-grid--pc { display: grid; grid-template-columns: 1fr; justify-items: center; margin-top: 8px; }
+      .learn-grid--pc .learn-card { max-width: 440px; text-align: center; }
+
+      /* Center and enlarge overview title */
+      #overview #overview-title { text-align: center; font-size: clamp(1.9rem, 3.5vw, 2.6rem); line-height: 1.2; }
+
+      /* Some of my edits */
+      #edits .edits-title { text-align: center; font-size: clamp(1.9rem, 3.2vw, 2.6rem); margin: 0 0 .6rem; }
+
+      
+      .edits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+      .edit-card { display: flex; flex-direction: column; gap: 6px; }
+      .edit-card .ratio { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,.1); background: radial-gradient(120% 120% at 0% 0%, rgba(124,58,237,.12), transparent 60%); box-shadow: 0 24px 48px rgba(0,0,0,.85), 0 10px 28px rgba(0,0,0,.6); isolation: isolate; }
+      .edit-card .ratio { aspect-ratio: 9 / 16; }
+      .edit-card .ratio::before { content: none; }
+      .edit-card video { width: 100%; height: 100%; object-fit: contain; background: #000; display: block; position: relative; z-index: 1; }
+      .edit-card figcaption { text-align: center; color: var(--muted); font-size: .95rem; }
+      .edit-original { margin-top: 16px; }
+      .edit-original video { width: 100%; display: block; border-radius: 12px; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 10px 28px rgba(2,6,23,.45); }
+
+      /* Tips & Troubleshooting redesign */
+      #tips { position: relative; }
+      #tips #tips-title {
+        text-align: center;
+        font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+        margin-bottom: .75rem;
+        background: linear-gradient(90deg, var(--accent-2), var(--accent));
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      #tips .tips-list { list-style: none; padding: 0; margin: 0 auto; max-width: 900px; }
+      #tips .tip { display: flex; align-items: flex-start; gap: 12px; padding: 12px 6px; position: relative; }
+      #tips .tip::after {
+        content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+        background: radial-gradient(closest-side, rgba(96,165,250,.65), transparent) left,
+                    radial-gradient(closest-side, rgba(34,211,238,.65), transparent) right;
+        background-size: 50% 1px; background-repeat: no-repeat; opacity: .7;
+      }
+      #tips .tip:last-child::after { content: none; }
+      #tips .tip-ico { font-size: 1.25rem; line-height: 1; animation: neonPulse 3s ease-in-out infinite; }
+      #tips .tip:nth-child(2) .tip-ico { animation-delay: .3s; }
+      #tips .tip:nth-child(3) .tip-ico { animation-delay: .6s; }
+      #tips .tip:nth-child(4) .tip-ico { animation-delay: .9s; }
+      #tips .tip-text { color: var(--text); font-size: 1rem; }
+
+      @keyframes neonPulse {
+        0%, 100% { text-shadow: 0 0 6px rgba(96,165,250,.45), 0 0 14px rgba(34,211,238,.25); }
+        50%      { text-shadow: 0 0 10px rgba(34,211,238,.9), 0 0 20px rgba(96,165,250,.6); }
+      }
+
+      /* Animated Gradient CTA Button */
+      @property --gradient-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+      @property --gradient-angle-offset { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+      @property --gradient-percent { syntax: "<percentage>"; initial-value: 20%; inherits: false; }
+      @property --gradient-shine { syntax: "<color>"; initial-value: #8484ff; inherits: false; }
+
+      :root {
+        --shiny-cta-bg: #0a0f1c;
+        --shiny-cta-bg-subtle: #111827;
+        --shiny-cta-fg: #ffffff;
+        --shiny-cta-highlight: #7c3aed;
+        --shiny-cta-highlight-subtle: #22d3ee;
+      }
+
+      .cta-wrap { margin-top: 10px; display: flex; justify-content: center; }
+      .shiny-cta {
+        --gradient-angle: 0deg;
+        --gradient-angle-offset: 0deg;
+        --gradient-percent: 20%;
+        --gradient-shine: var(--shiny-cta-highlight-subtle);
+        --shadow-size: 2px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 9999px;
+        padding: 0.9rem 1.6rem;
+        font-size: 1.05rem;
+        line-height: 1.2;
+        font-weight: 700;
+        color: var(--shiny-cta-fg);
+        background: linear-gradient(var(--shiny-cta-bg), var(--shiny-cta-bg)) padding-box,
+                   conic-gradient(
+                     from calc(var(--gradient-angle) - var(--gradient-angle-offset)),
+                     transparent 0%,
+                     var(--shiny-cta-highlight) 5%,
+                     var(--gradient-shine) 15%,
+                     var(--shiny-cta-highlight) 30%,
+                     transparent 40%,
+                     transparent 100%
+                   ) border-box;
+        border: 2px solid transparent;
+        box-shadow: inset 0 0 0 1px var(--shiny-cta-bg-subtle), 0 8px 28px rgba(18,0,42,.35);
+        outline: none;
+        transition: --gradient-angle-offset 800ms cubic-bezier(0.25, 1, 0.5, 1),
+                    --gradient-percent 800ms cubic-bezier(0.25, 1, 0.5, 1),
+                    --gradient-shine 800ms cubic-bezier(0.25, 1, 0.5, 1),
+                    box-shadow 0.3s;
+        cursor: pointer;
+        isolation: isolate;
+        outline-offset: 4px;
+        z-index: 0;
+        animation: border-spin 2.5s linear infinite;
+        text-decoration: none;
+        display: inline-flex;
+      }
+      @keyframes border-spin { to { --gradient-angle: 360deg; } }
+      .shiny-cta:active { transform: translateY(1px); }
+      .shiny-cta::before {
+        content: '';
+        pointer-events: none;
+        position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+        z-index: 0; --size: calc(100% - 6px); --position: 2px; --space: 4px;
+        width: var(--size); height: var(--size);
+        background: radial-gradient(circle at var(--position) var(--position), white 0.5px, transparent 0) padding-box;
+        background-size: var(--space) var(--space); background-repeat: space;
+        mask-image: conic-gradient(from calc(var(--gradient-angle) + 45deg), black, transparent 10% 90%, black);
+        border-radius: inherit; opacity: 0.35;
+      }
+      .shiny-cta::after {
+        content: '';
+        pointer-events: none;
+        position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+        z-index: 1; width: 100%; aspect-ratio: 1;
+        background: linear-gradient(-50deg, transparent, var(--shiny-cta-highlight), transparent);
+        mask-image: radial-gradient(circle at bottom, transparent 40%, black);
+        opacity: 0.6; animation: shimmer 4s linear infinite;
+      }
+      .shiny-cta span { position: relative; z-index: 2; display: inline-block; }
+      .shiny-cta span::before {
+        content: '';
+        pointer-events: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+        z-index: -1; --size: calc(100% + 1rem); width: var(--size); height: var(--size);
+        box-shadow: inset 0 -1ex 2rem 4px var(--shiny-cta-highlight);
+        opacity: 0; border-radius: inherit; animation: breathe 4.5s linear infinite;
+      }
+      @keyframes shimmer { to { transform: translate(-50%, -50%) rotate(360deg);} }
+      @keyframes breathe { 0%, 100% { transform: translate(-50%, -50%) scale(1);} 50% { transform: translate(-50%, -50%) scale(1.20);} }
+
+      /* What you will learn (apps) */
+      #learn-apps .panel { background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 18px; backdrop-filter: blur(6px); }
+      #learn-apps #learn-apps-title { text-align: center; font-size: clamp(1.8rem, 3.2vw, 2.4rem); margin: 0 0 .75rem; }
+      .learn-apps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+      .learn-app-card { background: linear-gradient(180deg, var(--card), #0a0f1c); border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 16px; box-shadow: 0 6px 20px rgba(2,6,23,.35); transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+      .learn-app-card:hover { transform: translateY(-3px); border-color: rgba(96,165,250,.35); box-shadow: 0 12px 28px rgba(2,6,23,.5); }
+      .learn-app-icon { width: 48px; height: 48px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; letter-spacing: .2px; margin-bottom: .5rem; border: 1px solid rgba(255,255,255,.18); }
+      .learn-app-card h3 { margin: 0 0 .25rem; font-size: 1.05rem; }
+      .learn-app-card p { margin: 0; color: var(--muted); font-size: .95rem; }
+      .icon-capcut { background: #ffffff; color: #0a0a0a; }
+      .icon-node { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: #eaf2ff; }
+      .icon-alight { background: linear-gradient(135deg, #065f46, #10b981); color: #e8fff8; }
+      .icon-wink { background: linear-gradient(135deg, #6d28d9, #ec4899); color: #fff0ff; }
+
+      /* Hub (Main page) - Tutorials, Free Remake Clips, Sources */
+      .hub .frame {
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 16px;
+        overflow: hidden;
+        aspect-ratio: 16/10;
+        min-height: 560px;
+        background: rgba(2,6,23,.25);
+        backdrop-filter: blur(2px);
+      }
+      .hub .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0,1fr));
+        grid-template-rows: 1fr;
+        gap: 12px;
+        height: 100%;
+        padding: 12px;
+        place-items: center;
+      }
+      .hub .card { position: relative; border-radius: 12px; overflow: hidden; isolation: isolate; width: 100%; max-width: 420px; aspect-ratio: 2/3; }
+      .hub .card::before { content: ""; position: absolute; inset: 0; background-size: cover; background-position: center; transform: scale(1.02); transition: transform .4s ease; pointer-events: none; }
+      .hub .card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6,12,24,.15), rgba(6,12,24,.6)); mix-blend-mode: multiply; pointer-events: none; }
+      .hub .card:hover::before { transform: scale(1.06); }
+      .hub .label { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; border-radius: 10px; background: rgba(2,6,23,.45); border: 1px solid rgba(255,255,255,.18); color: var(--text); font-weight: 700; letter-spacing: .2px; backdrop-filter: blur(8px); }
+      .hub .label span { font-size: 1.05rem; }
+      .hub .label-link { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; height: 100%; color: inherit; text-decoration: none; }
+      .bg-levi::before { background-image: url('levi.jpg'); }
+      .bg-cc::before { background-image: url('cc.jpg'); }
+      .bg-source::before { background-image: url('source.jpg'); }
+
+      @media (max-width: 640px) { .hub .frame { min-height: 620px; } }
+      @media (max-width: 900px) { .hub .grid { grid-template-columns: 1fr; grid-template-rows: repeat(3, 1fr); } }
+
+      @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+      .hero, .section { animation: fadeUp .6s ease-out both; }
+      .section:nth-of-type(odd) { animation-delay: .05s; }
+      .section:nth-of-type(even) { animation-delay: .1s; }
+
+      @media (prefers-reduced-motion: reduce) {
+        * { animation: none !important; transition: none !important; }
+      }
+
+      @media (max-width: 640px) { nav ul { flex-wrap: wrap; gap: .6rem; } }
+    </style>
+  </head>
+  <body id="top">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <div class="bg-video" aria-hidden="true">
+      <video autoplay muted loop playsinline>
+        <source src="goku.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <header role="banner">
+      <div class="container header-inner">
+        <div class="brand">
+          <span class="logo" aria-hidden="true"><img src="hovoc.jpg" alt="" /></span>
+          <span>KWEN/HOVOC/SLSK</span>
+        </div>
+        <nav aria-label="Primary">
+          <ul>
+            <li><a href="#overview">Overview</a></li>
+                                                            <li><a href="#tips">Tips</a></li>
+                      </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="container">
+          <p class="muted text-gradient-purple">Learn fast. Edit better.</p>
+                    <h1 id="hero-title" class="turbulence-purple">Yo, welcome to my editing world</h1>
+                    <p class="text-gradient-purple">I’m here to show you how to edit like a pro — anime, film, or whatever vibe you’re into. <br>
+              Grab some free clips, learn tricks, and check my own edits while you’re at it.</p>
+          <div class="cta-wrap">
+            <a class="shiny-cta" href="#hub" aria-label="Explore tutorials and clips">
+              <span>Tutorials</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section id="overview" class="section" aria-labelledby="overview-title">
+        <div class="container">
+          <h2 id="overview-title">Foundations you'll learn</h2>
+          <p class="learn-intro">Foundations such as cutting, adding transitions, layering effects, text animation, creative thinking (storytelling), color grading, and foundational skills for moving on to PC editing later.</p>
+          <div class="learn-grid learn-grid--primary">
+            <article class="learn-card">
+              <div class="learn-icon" aria-hidden="true">✂️</div>
+              <h3>Cutting</h3>
+            </article>
+            <article class="learn-card">
+              <div class="learn-icon" aria-hidden="true">🎞️</div>
+              <h3>Transitions</h3>
+            </article>
+            <article class="learn-card">
+              <div class="learn-icon" aria-hidden="true">🔤</div>
+              <h3>Text Animation</h3>
+            </article>
+            <article class="learn-card">
+              <div class="learn-icon" aria-hidden="true">🪄</div>
+              <h3>Layering Effects</h3>
+            </article>
+            <article class="learn-card">
+              <div class="learn-icon" aria-hidden="true">📖</div>
+              <h3>Storytelling</h3>
+            </article>
+            <article class="learn-card">
+              <div class="learn-icon" aria-hidden="true">🎨</div>
+              <h3>Color Grading</h3>
+            </article>
+          </div>
+          <div class="learn-sep" role="separator" aria-hidden="true"></div>
+          <div class="learn-grid learn-grid--pc">
+            <article class="learn-card">
+              <div class="learn-icon" aria-hidden="true">💻</div>
+              <h3>PC Editing Foundations</h3>
+              <p>Core skills to move to desktop later.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="edits" class="section" aria-labelledby="edits-title">
+        <div class="container">
+          <h2 id="edits-title" class="edits-title turbulence-purple-edits">Some of my edits</h2>
+          <div class="edits-grid">
+            <figure class="edit-card">
+              <div class="ratio">
+                <video src="edit2.MP4" controls playsinline preload="metadata"></video>
+              </div>
+                          </figure>
+            <figure class="edit-card">
+              <div class="ratio">
+                <video src="edit3.MP4" controls playsinline preload="metadata"></video>
+              </div>
+                          </figure>
+            <figure class="edit-card">
+              <div class="ratio">
+                <video src="edit4.MP4" controls playsinline preload="metadata"></video>
+              </div>
+                          </figure>
+          </div>
+          <div class="edit-original">
+            <video src="edit1.mp4" controls playsinline preload="metadata"></video>
+          </div>
+        </div>
+      </section>
+
+      <section id="hub" class="section hub" aria-labelledby="hub-title">
+        <div class="container">
+          <h2 id="hub-title" style="text-align:center; margin:0 0 .5rem;">Tutorials</h2>
+          <div class="frame">
+            <div class="grid">
+              <article class="card bg-levi">
+                <div class="label"><a class="label-link" href="https://t.me/+8YkxvRWKwSFlNWEy" target="_blank" rel="noopener noreferrer"><span>Tutorials</span><span aria-hidden="true">→</span></a></div>
+              </article>
+              <article class="card bg-cc">
+                <div class="label"><a class="label-link" href="https://drive.google.com/drive/folders/1n8XOpnV-pjoYVcBoAYvENZvxDrMx_I8m?usp=sharing" target="_blank" rel="noopener noreferrer"><span>Free Remake Clips</span><span aria-hidden="true">→</span></a></div>
+              </article>
+              <article class="card bg-source">
+                <div class="label"><a class="label-link" href="https://t.me/+w7WeTul6fwMzNGEy" target="_blank" rel="noopener noreferrer"><span>Sources</span><span aria-hidden="true">→</span></a></div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      
+      
+      
+      <section id="learn-apps" class="section learn-apps" aria-labelledby="learn-apps-title">
+        <div class="container">
+          <div class="panel">
+            <h2 id="learn-apps-title">Recommended apps</h2>
+            <div class="learn-apps-grid">
+              <article class="learn-app-card">
+                <div class="learn-app-icon icon-capcut" aria-hidden="true">CC</div>
+                <h3>CapCut</h3>
+                <p>for cutting clips</p>
+              </article>
+              <article class="learn-app-card">
+                <div class="learn-app-icon icon-node" aria-hidden="true">NV</div>
+                <h3>Node Video</h3>
+                <p>for some visual effects</p>
+              </article>
+              <article class="learn-app-card">
+                <div class="learn-app-icon icon-alight" aria-hidden="true">AM</div>
+                <h3>Alight Motion</h3>
+                <p>for editing part</p>
+              </article>
+              <article class="learn-app-card">
+                <div class="learn-app-icon icon-wink" aria-hidden="true">W</div>
+                <h3>Wink</h3>
+                <p>for enhancing the quality</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      
+      <section id="tips" class="section tips" aria-labelledby="tips-title">
+        <div class="container">
+          <h2 id="tips-title">Tips & Troubleshooting</h2>
+          <ul class="tips-list">
+            <li class="tip"><span class="tip-ico" aria-hidden="true">💡</span><span class="tip-text">Good lighting improves quality significantly.</span></li>
+            <li class="tip"><span class="tip-ico" aria-hidden="true">✂️</span><span class="tip-text">Keep clips short; remove silences and filler.</span></li>
+            <li class="tip"><span class="tip-ico" aria-hidden="true">📺</span><span class="tip-text">Export at the right resolution for your platform.</span></li>
+            <li class="tip"><span class="tip-ico" aria-hidden="true">☁️</span><span class="tip-text">Back up originals before heavy edits.</span></li>
+          </ul>
+          <p class="top-link"><a href="#top">Back to top ↑</a></p>
+        </div>
+      </section>
+
+          </main>
+
+    <footer role="contentinfo">
+      <div class="container footer-inner">
+        <p>© <span id="year"></span> KWEN/HOVOC/SLSK</p>
+      </div>
+    </footer>
+
+    <svg aria-hidden="true" width="0" height="0" style="position:absolute">
+      <defs>
+        <filter id="turbulencePurpleColor">
+          <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="3" result="noise">
+            <animate attributeName="baseFrequency" dur="8s" values="0.010;0.018;0.012;0.010" repeatCount="indefinite" />
+          </feTurbulence>
+          <feColorMatrix in="noise" type="luminanceToAlpha" result="mask"/>
+          <!-- Increase contrast and bias toward darker regions to favor purple while keeping some white visible -->
+          <feComponentTransfer in="mask" result="maskAdj">
+            <feFuncA type="gamma" amplitude="1" exponent="1.8" offset="0"/>
+          </feComponentTransfer>
+          <feComponentTransfer in="maskAdj" result="invMask">
+            <feFuncA type="table" tableValues="1 0"/>
+          </feComponentTransfer>
+          <feFlood flood-color="#ffffff" result="white"/>
+          <feFlood flood-color="#12002a" result="purple"/>
+          <feComposite in="white" in2="maskAdj" operator="in" result="whitePart"/>
+          <feComposite in="purple" in2="invMask" operator="in" result="purplePart"/>
+          <feMerge result="blend">
+            <feMergeNode in="whitePart"/>
+            <feMergeNode in="purplePart"/>
+          </feMerge>
+          <feComposite in="blend" in2="SourceAlpha" operator="in" result="colored"/>
+          <feComposite in="colored" in2="SourceGraphic" operator="over"/>
+        </filter>
+
+        <filter id="turbulencePurpleColorEdits">
+          <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="3" result="noise">
+            <animate attributeName="baseFrequency" dur="8s" values="0.010;0.018;0.012;0.010" repeatCount="indefinite" />
+          </feTurbulence>
+          <feColorMatrix in="noise" type="luminanceToAlpha" result="mask"/>
+          <feComponentTransfer in="mask" result="maskAdj">
+            <feFuncA type="gamma" amplitude="1" exponent="2.0" offset="0"/>
+          </feComponentTransfer>
+          <feComponentTransfer in="maskAdj" result="invMask">
+            <feFuncA type="table" tableValues="1 0"/>
+          </feComponentTransfer>
+          <feFlood flood-color="#ffffff" result="white"/>
+          <feFlood flood-color="#223B56" result="purple"/>
+          <feComposite in="white" in2="maskAdj" operator="in" result="whitePart"/>
+          <feComposite in="purple" in2="invMask" operator="in" result="purplePart"/>
+          <feMerge result="blend">
+            <feMergeNode in="whitePart"/>
+            <feMergeNode in="purplePart"/>
+          </feMerge>
+          <feColorMatrix in="blend" type="saturate" values="4.0" result="blendSat"/>
+          <feComposite in="blendSat" in2="SourceAlpha" operator="in" result="colored"/>
+          <feComposite in="colored" in2="SourceGraphic" operator="over"/>
+        </filter>
+      
+      
+      
+            </defs>
+    </svg>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+<script src="script.js"></script>
+</body>
+
+<script src="script.js"></script>
